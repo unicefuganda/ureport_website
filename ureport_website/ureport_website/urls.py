@@ -1,20 +1,73 @@
-from django.conf.urls import patterns, include, url
-from django.views.generic import TemplateView
+# ureport_website/urls.py
 
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
+from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import url
 
-urlpatterns = patterns('',
-    url(r'^$', TemplateView.as_view(template_name='base.html')),
+from .views import SiteIndexView
+from .views import AboutView
+from .views import EngageView
+from .views import NationalPulseView
+from .views import PollsListView
+from .views import PollDetailView
+from .views import PartnersListView
+from .views import PartnersDetailView
+from .views import ReadListView
 
-    # Examples:
-    # url(r'^$', 'ureport_website.views.home', name='home'),
-    # url(r'^ureport_website/', include('ureport_website.foo.urls')),
+urlpatterns = patterns(
+    '',
+    url(
+        r'^$',
+        SiteIndexView.as_view(),
+        name="website-index"
+    ),
+    url(
+        '^about-ureport$',
+        AboutView.as_view(),
+        name="website-about-ureport"
+    ),
+    url(
+        r'^engage$',
+        EngageView.as_view(),
+        name='website-engage'
+    ),
+    url(
+        r'^national-pulse$',
+        NationalPulseView.as_view(),
+        name='website-national-pulse'
+    ),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Polls
+    url(
+        r'^polls/$',
+        PollsListView.as_view(),
+        name='website-polls'
+    ),
+    url(
+        r'^polls/(?P<object_id>\d+)/$',
+        PollDetailView.as_view(),
+        name='website-polls-detail'
+    ),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    # Partners
+    url(
+        r'^partners$',
+        PartnersListView.as_view(),
+        name='website-partners'
+    ),
+    url(
+        r'^partners/(?P<slug>[\w\-]+)/$',
+        PartnersDetailView.as_view(),
+        name='website-partners-detail'
+    ),
+
+    # Read
+    url(
+        r'^read$',
+        ReadListView.as_view(),
+        name='website-read'
+    ),
+    url(r'^read/(?P<slug>[\w\-]+)/$', 'ureport_website.views.readDetail'),
+
+    url(r'^watch$', 'ureport_website.views.watch', name='website-watch'),
+    url(r'^watch/(?P<slug>[\w\-]+)/$', 'ureport_website.views.watchDetail', name='website-watch-detail'),
 )
