@@ -1,7 +1,9 @@
 # ureport_website/urls.py
 
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
+from django.conf import settings
+from django.conf.urls import patterns
+from django.conf.urls import url
+from django.conf.urls.static import static
 
 from .views import SiteIndexView
 from .views import AboutView
@@ -70,4 +72,4 @@ urlpatterns = patterns(
 
     url(r'^watch$', 'ureport_website.views.watch', name='website-watch'),
     url(r'^watch/(?P<slug>[\w\-]+)/$', 'ureport_website.views.watchDetail', name='website-watch-detail'),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,56 @@
+/* LOGIN FORM */
+
+body.login {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-family: Arial,sans-serif;
+    color: #333;
+    background: #0076AD;
+}
+
+.login #container {
+    margin-top: 0 auto;
+}
+
+.login #content-main {
+    width: 100%;
+}
+
+.login form {
+    margin-top: 1em;
+}
+
+.login .form-row {
+    padding: 4px 0;
+    float: left;
+    width: 100%;
+}
+
+.login .form-row label {
+    float: left;
+    width: 9em;
+    padding-right: 0.5em;
+    line-height: 2em;
+    text-align: right;
+    font-size: 1em;
+    color: #e8e8e8;
+}
+
+.login .form-row #id_username, .login .form-row #id_password {
+    width: 14em;
+}
+
+.login span.help {
+    font-size: 10px;
+    display: block;
+}
+
+.login .submit-row {
+    clear: both;
+    padding: 1em 0 0 9.4em;
+}
+
+.login .password-reset-link {
+    text-align: center;
+}

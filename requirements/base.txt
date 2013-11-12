@@ -5,3 +5,5 @@ django-model-utils
 logutils
 South
 psycopg2
+pillow
+pytz

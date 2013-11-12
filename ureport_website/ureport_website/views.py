@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, DetailView, ListView
 
-from poll.models import Poll
-
 from .models import Partners, Quotes, Read, Watch
 
 
@@ -48,13 +46,12 @@ class AboutView(TemplateView):
         return context
 
 
-class PollsListView(ListView):
-    model = Poll
+class PollsListView(TemplateView):
     template_name = 'ureport_website/polls_list.html'
 
 
-class PollDetailView(DetailView):
-    model = Poll
+class PollDetailView(TemplateView):
+    template_name = 'ureport_website/polls_detail.html'
 
 
 class PartnersListView(ListView):

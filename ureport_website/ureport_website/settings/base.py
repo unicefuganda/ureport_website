@@ -183,6 +183,7 @@ DJANGO_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     # Useful template tags:
     # 'django.contrib.humanize',
@@ -199,6 +200,7 @@ THIRD_PARTY_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    'ureport_website',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
