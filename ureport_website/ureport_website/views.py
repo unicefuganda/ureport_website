@@ -79,6 +79,7 @@ class PartnersDetailView(DetailView):
 class ReadListView(ListView):
     model = Read
     context_object_name = 'readList'
+    queryset = Read.objects.filter(published=True)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -96,6 +97,7 @@ class ReadListView(ListView):
 class ReadDetailView(DetailView):
     model = Read
     context_object_name = 'readDetails'
+    queryset = Read.objects.filter(published=True)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
