@@ -1,4 +1,3 @@
-from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, DetailView, ListView
 
 from .models import Partners, Quotes, Read, Watch
@@ -100,36 +99,38 @@ class ReadDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        context = super(PartnersDetailView, self).get_context_data(**kwargs)
+        context = super(ReadDetailView, self).get_context_data(**kwargs)
         context['quoteList'] = get_quote_list()
         context['readList'] = Read.objects.filter(published=True)
         return context
 
 
-def readDetail(request, slug):
-# get the read  object and quote posts
-    readList = Read.objects.filter(published=True)
-    quoteList = Quotes.objects.filter(published=True)
-    readDetails = get_object_or_404(Read, slug=slug)
-# now return the rendered template
-    return render(request, 'ureport_website/read_detail.html', {'readList': readList, 'readDetails': readDetails, 'quoteList': quoteList})
+class WatchListView(ListView):
+    model = Watch
+    context_object_name = 'watchList'
+    queryset = Watch.objects.filter(published=True)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(WatchListView, self).get_context_data(**kwargs)
+        context['quoteList'] = get_quote_list()
+
+        try:
+            watchLatest = Watch.objects.latest('id')
+        except Watch.DoesNotExist:
+            watchLatest = None
+        context['watchLatest'] = watchLatest
+        return context
 
 
-def watch(request):
-# get the watch and quote posts that are published
-    watch = Watch.objects.filter(published=True)
-    quoteList = Quotes.objects.filter(published=True)
-    try:
-        watchLatest = Watch.objects.latest('id')
-    except Watch.DoesNotExist:
-        watchLatest = None
-    return render(request, 'ureport_website/watch.html', {'watchList': watch, 'watchLatest': watchLatest, 'quoteList': quoteList})
+class WatchDetailView(DetailView):
+    model = Watch
+    context_object_name = 'watchDetails'
+    queryset = Watch.objects.filter(published=True)
 
-
-def watchDetail(request, slug):
-# get the watch object and quote posts
-    watch = Watch.objects.filter(published=True)
-    quoteList = Quotes.objects.filter(published=True)
-    watchDetails = get_object_or_404(Watch, slug=slug)
-# now return the rendered template
-    return render(request, 'ureport_website/watch_detail.html', {'watchList': watch, 'watchDetails': watchDetails, 'quoteList': quoteList})
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(WatchDetailView, self).get_context_data(**kwargs)
+        context['quoteList'] = get_quote_list()
+        context['watchList'] = Watch.objects.filter(published=True)
+        return context

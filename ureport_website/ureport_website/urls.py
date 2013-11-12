@@ -14,6 +14,9 @@ from .views import PollDetailView
 from .views import PartnersListView
 from .views import PartnersDetailView
 from .views import ReadListView
+from .views import ReadDetailView
+from .views import WatchListView
+from .views import WatchDetailView
 
 
 admin.autodiscover()
@@ -77,19 +80,19 @@ urlpatterns = patterns(
     ),
     url(
         r'^read/(?P<slug>[\w\-]+)/$',
-        'ureport_website.views.readDetail',
+        ReadDetailView.as_view(),
         name='website-read-detail'
     ),
 
     # Watch
     url(
         r'^watch$',
-        'ureport_website.views.watch',
+        WatchListView.as_view(),
         name='website-watch'
     ),
     url(
         r'^watch/(?P<slug>[\w\-]+)/$',
-        'ureport_website.views.watchDetail',
+        WatchDetailView.as_view(),
         name='website-watch-detail'
     ),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
