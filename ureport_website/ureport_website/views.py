@@ -112,7 +112,7 @@ def readDetail(request, slug):
     quoteList = Quotes.objects.filter(published=True)
     readDetails = get_object_or_404(Read, slug=slug)
 # now return the rendered template
-    return render(request, 'read_detail.html', {'readList': readList, 'readDetails': readDetails, 'quoteList': quoteList})
+    return render(request, 'ureport_website/read_detail.html', {'readList': readList, 'readDetails': readDetails, 'quoteList': quoteList})
 
 
 def watch(request):
@@ -123,7 +123,7 @@ def watch(request):
         watchLatest = Watch.objects.latest('id')
     except Watch.DoesNotExist:
         watchLatest = None
-    return render(request, 'watch.html', {'watchList': watch, 'watchLatest': watchLatest, 'quoteList': quoteList})
+    return render(request, 'ureport_website/watch.html', {'watchList': watch, 'watchLatest': watchLatest, 'quoteList': quoteList})
 
 
 def watchDetail(request, slug):
@@ -132,4 +132,4 @@ def watchDetail(request, slug):
     quoteList = Quotes.objects.filter(published=True)
     watchDetails = get_object_or_404(Watch, slug=slug)
 # now return the rendered template
-    return render(request, 'watch_detail.html', {'watchList': watch, 'watchDetails': watchDetails, 'quoteList': quoteList})
+    return render(request, 'ureport_website/watch_detail.html', {'watchList': watch, 'watchDetails': watchDetails, 'quoteList': quoteList})

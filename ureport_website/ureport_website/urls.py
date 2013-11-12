@@ -1,9 +1,9 @@
 # ureport_website/urls.py
 
 from django.conf import settings
-from django.conf.urls import patterns
-from django.conf.urls import url
+from django.conf.urls import patterns, url, include
 from django.conf.urls.static import static
+from django.contrib import admin
 
 from .views import SiteIndexView
 from .views import AboutView
@@ -15,8 +15,15 @@ from .views import PartnersListView
 from .views import PartnersDetailView
 from .views import ReadListView
 
+
+admin.autodiscover()
+
 urlpatterns = patterns(
     '',
+    url(
+        r'^admin/',
+        include(admin.site.urls)
+    ),
     url(
         r'^$',
         SiteIndexView.as_view(),
@@ -68,8 +75,21 @@ urlpatterns = patterns(
         ReadListView.as_view(),
         name='website-read'
     ),
-    url(r'^read/(?P<slug>[\w\-]+)/$', 'ureport_website.views.readDetail'),
+    url(
+        r'^read/(?P<slug>[\w\-]+)/$',
+        'ureport_website.views.readDetail',
+        name='website-read-detail'
+    ),
 
-    url(r'^watch$', 'ureport_website.views.watch', name='website-watch'),
-    url(r'^watch/(?P<slug>[\w\-]+)/$', 'ureport_website.views.watchDetail', name='website-watch-detail'),
+    # Watch
+    url(
+        r'^watch$',
+        'ureport_website.views.watch',
+        name='website-watch'
+    ),
+    url(
+        r'^watch/(?P<slug>[\w\-]+)/$',
+        'ureport_website.views.watchDetail',
+        name='website-watch-detail'
+    ),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

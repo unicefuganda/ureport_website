@@ -2,6 +2,7 @@
 {% load websitetags %}
 {% load humanize %}
 {% load url from future %}
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,8 +14,8 @@
     {% theme_stylesheet_tag %}
     {% bootstrap_stylesheet_tag "responsive" %}
 
-    <script src="{{ STATIC_URL }}ureport_website/js/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}ureport_website/jquery-ui/jquery-ui.min.js"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'jquery-ui/jquery-ui.min.js' %}"></script>
     {% bootstrap_javascript_tag %}
     <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
