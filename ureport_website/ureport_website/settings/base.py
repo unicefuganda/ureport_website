@@ -245,3 +245,13 @@ LOGGING = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
+
+########## UREPORT API CONFIGURATION
+UREPORT_API_BASE = 'http://ureport.ug/api/v1/'
+UREPORT_API_LIMIT = 0
+UREPORT_API_USERNAME = 'developer'
+UREPORT_API_KEY = '10cb98c8f425edfcfaf92bded4a856a170777be1'
+UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'
+UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
+UREPORT_PULSE_MAP_ARGS = None
+########## END UREPORT API CONFIGURATION

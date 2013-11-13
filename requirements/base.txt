@@ -7,3 +7,4 @@ South
 psycopg2
 pillow
 pytz
+simplejson

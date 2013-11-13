@@ -1,4 +1,8 @@
+import simplejson
+import urllib
+
 from django.views.generic import TemplateView, DetailView, ListView
+from django.conf import settings
 
 from .models import Partners, Quotes, Read, Watch
 
@@ -32,7 +36,14 @@ class EngageView(TemplateView):
 
 
 class NationalPulseView(TemplateView):
-    template_name = 'ureport_website/national_pulse.html'
+    template_name = 'national_pulse.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(NationalPulseView, self).get_context_data(**kwargs)
+        context['pulse_json_url'] = settings.UREPORT_PULSE_WS
+        context['pulse_districts_url'] = settings.UREPORT_PULSE_DISTRICT_WS
+        context['map_args'] = settings.UREPORT_PULSE_MAP_ARGS
+        return context
 
 
 class AboutView(TemplateView):
@@ -47,6 +58,26 @@ class AboutView(TemplateView):
 
 class PollsListView(TemplateView):
     template_name = 'ureport_website/polls_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PollsListView, self).get_context_data(**kwargs)
+
+        api_base = settings.UREPORT_API_BASE
+
+        args = {
+            'limit': settings.UREPORT_API_LIMIT,
+            'username': settings.UREPORT_API_USERNAME,
+            'api_key': settings.UREPORT_API_KEY,
+            'format': 'json',
+        }
+
+        url = api_base + '/polls/?' + urllib.urlencode(args)
+        result = simplejson.load(urllib.urlopen(url))
+        if 'Error' in result:
+            print result['Error']
+        else:
+            context['polls'] = result['objects']
+        return context
 
 
 class PollDetailView(TemplateView):

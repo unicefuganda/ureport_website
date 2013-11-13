@@ -43,9 +43,14 @@ urlpatterns = patterns(
         name='website-engage'
     ),
     url(
-        r'^national-pulse$',
+        r'^national-pulse/$',
         NationalPulseView.as_view(),
         name='website-national-pulse'
+    ),
+    url(
+        r'^national-pulse/(?P<period>\w+)/$',
+        NationalPulseView.as_view(),
+        name='website-national-pulse-detail'
     ),
 
     # Polls
