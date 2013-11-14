@@ -11,6 +11,7 @@ from .views import EngageView
 from .views import NationalPulseView
 from .views import PollsListView
 from .views import PollDetailView
+from .views import PollSearchView
 from .views import PartnersListView
 from .views import PartnersDetailView
 from .views import ReadListView
@@ -63,6 +64,11 @@ urlpatterns = patterns(
         r'^polls/(?P<object_id>\d+)/$',
         PollDetailView.as_view(),
         name='website-polls-detail'
+    ),
+    url(
+        r'^polls/search/$',
+        PollSearchView.as_view(),
+        name='website-polls-search'
     ),
 
     # Partners

@@ -1,10 +1,23 @@
 import simplejson
 import urllib
+import re
 
 from django.views.generic import TemplateView, DetailView, ListView
 from django.conf import settings
 
 from .models import Partners, Quotes, Read, Watch
+
+
+def get_polls():
+    api_base = settings.UREPORT_API_BASE
+    args = {
+        'limit': settings.UREPORT_API_LIMIT,
+        'username': settings.UREPORT_API_USERNAME,
+        'api_key': settings.UREPORT_API_KEY,
+        'format': 'json',
+    }
+    url = api_base + '/polls/?' + urllib.urlencode(args)
+    return simplejson.load(urllib.urlopen(url))
 
 
 def get_read_list():
@@ -62,26 +75,44 @@ class PollsListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PollsListView, self).get_context_data(**kwargs)
 
-        api_base = settings.UREPORT_API_BASE
+        result = get_polls()
 
-        args = {
-            'limit': settings.UREPORT_API_LIMIT,
-            'username': settings.UREPORT_API_USERNAME,
-            'api_key': settings.UREPORT_API_KEY,
-            'format': 'json',
-        }
-
-        url = api_base + '/polls/?' + urllib.urlencode(args)
-        result = simplejson.load(urllib.urlopen(url))
         if 'Error' in result:
             print result['Error']
         else:
-            context['polls'] = result['objects']
+            objects = result['objects']
+            polls = sorted(objects, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
+            context['polls'] = polls[:50]
+            context['recent_polls'] = polls[:5]
         return context
 
 
 class PollDetailView(TemplateView):
     template_name = 'ureport_website/polls_detail.html'
+
+
+class PollSearchView(TemplateView):
+    template_name = 'ureport_website/polls_search_results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PollSearchView, self).get_context_data(**kwargs)
+        try:
+            search_term = self.request.GET.get('q')
+        except:
+            return context
+
+        result = get_polls()
+
+        if 'Error' in result:
+            print result['Error']
+        else:
+            prog = re.compile(search_term)
+            objects = result['objects']
+            p = [poll for poll in objects if prog.search(poll['question'])]
+            polls = sorted(p, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
+            context['polls'] = p[:50]
+            context['recent_polls'] = polls[:5]
+        return context
 
 
 class PartnersListView(ListView):
