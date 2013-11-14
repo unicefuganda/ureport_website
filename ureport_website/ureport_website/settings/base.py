@@ -258,7 +258,7 @@ UREPORT_PULSE_MAP_ARGS = {
         'longitude': 1.5,
         'latitude': 35
     },
-    'width': 700,
+    'width': 600,
     'height': 540,
     'rotate': [-1, 11.5, -16.4],
     'parallels': [25, 35],
