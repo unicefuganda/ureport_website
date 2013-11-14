@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 <!-- add active tag to main navigation -->
 {% block national-pulse-active %}current-page{% endblock %}
 
@@ -27,9 +28,16 @@
                             <div class="buttons"><button type="submit" value="1" class="btn btn-primary btn-mini">This year's pulse</button></div>
                         </div>
                         
+                        <!-- Placement of pulse map code -->
+				<div id="ug-chart"></div>
                         <!-- Placement of pulse pie code -->
 
-			<div class="poll-pie"><img src="{% static 'img/pie_chart.png' %}" width="225" height="205"/></div>
+			<div class="poll-pie">
+			    <div id="national-pie-chart" class="donut control">
+				<a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+				<span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>
+			    </div>
+			</div>
                         <div>
                             Key
                                 <ul>
@@ -43,25 +51,20 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="poll-area">
-                            <div class="poll-map">
 
-                        <!-- Placement of pulse map code -->
+			<div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
+			    Loading National Pulse... Please wait, This may take a while.<br/>
+			    <img src="{% static 'img/ajax-loader.gif' %}" style="padding-left: 40%">
+			</div>
 
-				<img src="{% static 'img/national_pulse_map.gif' %}" width="435" height="383"/>
-                            </div>
+			<div class="pulse-filter">
+			    Showing pulse for <span>Mpigi</span>
+			    <!-- Placement of pulse reset button code -->
+			    <div class="buttons">
+				<a class="btn btn-default btn-mini" href="javascript:ugChart.filterAll();dc.redrawAll();">Reset to national pulse</a>
+			    </div>
+			</div>
 
-                        <!-- Placement of pulse location identifier code -->
-                        
-                            <div class="pulse-filter">
-                            
-                                Showing pulse for <span>Mpigi</span>
-
-                        <!-- Placement of pulse reset button code -->
-                        
-                                <div class="buttons"><button type="submit" value="1" class="btn btn-default btn-mini">Reset to national pulse</button></div>
-                            </div>
-                        </div>  
                     </div>
                 </div>
           
@@ -87,5 +90,54 @@
 	<div class="page-ad"><img src="{% static 'img/become_rest.gif' %}" height="135" width="350"/></div>
     </div>
 </div>
+
+    <script>
+	$( "#loading" ).hide();
+
+	var numberFormat = d3.format(".2f");
+	var ugChart = dc.geoChoroplethChart("#ug-chart");
+	var totalsChart = dc.bubbleChart("#totals-chart");
+	var nationalPieChart = dc.pieChart("#national-pie-chart")
+	var raw_map_args = '{{ map_args }}';
+	var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
+	var map_args = JSON.parse(cleaned_map_args);
+	var width = map_args.width
+	var height = map_args.height
+
+	var projection = d3.geo.albers()
+	.center([map_args.center.latitude, map_args.center.longitude])
+	.rotate(map_args.rotate)
+	.parallels(map_args.parallels)
+	.scale(map_args.scale);
+
+	// declare some vars here so they are available
+	// in the browser console for debugging
+	var data;
+	var districts;
+	var shapes;
+	var data1;
+	var categories;
+	var debug = false;
+	var total;
+	var caseTypes;
+	var categoriesGroup;
+
+	queue().defer(d3.json, "{% static 'districts.json' %}")
+	.defer(d3.json, "{% static 'pulse.json' %}")
+	.await(ready)
+    </script>
+
+{% endblock %}
+
+{% block extra_head %}
+    <script type="text/javascript" src="{% static 'js/d3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/crossfilter.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/queue.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dc.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/colorbrewer.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/underscore-min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/d3.geo.projection.v0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/national-pulse.js' %}"></script>
 
 {% endblock %}

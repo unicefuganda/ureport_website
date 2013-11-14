@@ -49,7 +49,7 @@ class EngageView(TemplateView):
 
 
 class NationalPulseView(TemplateView):
-    template_name = 'national_pulse.html'
+    template_name = 'ureport_website/national_pulse.html'
 
     def get_context_data(self, **kwargs):
         context = super(NationalPulseView, self).get_context_data(**kwargs)

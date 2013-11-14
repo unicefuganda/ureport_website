@@ -251,7 +251,17 @@ UREPORT_API_BASE = 'http://ureport.ug/api/v1/'
 UREPORT_API_LIMIT = 0
 UREPORT_API_USERNAME = 'developer'
 UREPORT_API_KEY = '10cb98c8f425edfcfaf92bded4a856a170777be1'
-UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'
+UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
 UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
-UREPORT_PULSE_MAP_ARGS = None
+UREPORT_PULSE_MAP_ARGS = {
+    'center': {
+        'longitude': 1.5,
+        'latitude': 35
+    },
+    'width': 700,
+    'height': 540,
+    'rotate': [-1, 11.5, -16.4],
+    'parallels': [25, 35],
+    'scale': 5000
+}
 ########## END UREPORT API CONFIGURATION
