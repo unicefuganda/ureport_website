@@ -33,9 +33,34 @@ function load_cloud_with_category(){
   }
 }
 
+// use this to format decimals to two places
+var numberFormat = d3.format(".2f");
+
+// declare some vars here so they are available
+// in the browser console for debugging
+var data;
+var districts;
+var shapes;
+var data1;
+var categories;
+var debug = false;
+var total;
+var caseTypes;
+var categoriesGroup;
+
 
 function ready(error, ug, category) {
     var loading = document.getElementById("loading");
+    if (error !== null) {
+      // replace loading notice with error message
+      // if assets do not load properly
+      loading = false;
+      d3.select('#loading')
+        .attr('style', "position: absolute; top: 0; left: 42%; z-index: 56; background: #ff0000; color: #ffffff;")
+        .html('Oops. An error has occured. Please try again later.');
+    }
+
+    // hide loading notice
     if (loading){
 	    loading.style.display = "none";
     }
@@ -150,7 +175,8 @@ function ready(error, ug, category) {
             return d[1];
           } else {
             // if no category is selected,
-            // color districts based on the dominant category
+            // color districts based on the
+            // district's dominant category
             ugChart.colors(categoryColor)
             return d[0];
           }
@@ -182,12 +208,12 @@ function ready(error, ug, category) {
 
     dc.renderAll();
 
-
+    // create legend
     var legend = d3.select('.legend');
-
     var legendItems = legend.selectAll('.legend-item')
       .data(_.zip(categoryColor.domain(), categoryColor.range()));
 
+    // append legend list items
     legendItems.enter().append('li')
        .attr("style", function (d) { return "border-left: 18px solid " + categoryColor(d[0]) + ";"; })
     .append('span')

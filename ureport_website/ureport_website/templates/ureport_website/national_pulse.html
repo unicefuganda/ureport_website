@@ -85,41 +85,30 @@
 </div>
 
     <script>
-	var loading = document.getElementById("loading");
-	if (loading) {
-	  loading.style.display = "none";
-	}
-
-	var numberFormat = d3.format(".2f");
+        // bind map and pie chart to DOM
 	var ugChart = dc.geoChoroplethChart("#ug-chart");
 	var nationalPieChart = dc.pieChart("#national-pie-chart")
+
+	// parse map arguments
 	var raw_map_args = '{{ map_args }}';
 	var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
 	var map_args = JSON.parse(cleaned_map_args);
 	var width = map_args.width
 	var height = map_args.height
 
+	// define map projection
+	// use Albers because it is an equal area projection
 	var projection = d3.geo.albers()
-	.center([map_args.center.latitude, map_args.center.longitude])
-	.rotate(map_args.rotate)
-	.parallels(map_args.parallels)
-	.scale(map_args.scale);
+	  .center([map_args.center.latitude, map_args.center.longitude])
+	  .rotate(map_args.rotate)
+	  .parallels(map_args.parallels)
+	  .scale(map_args.scale);
 
-	// declare some vars here so they are available
-	// in the browser console for debugging
-	var data;
-	var districts;
-	var shapes;
-	var data1;
-	var categories;
-	var debug = false;
-	var total;
-	var caseTypes;
-	var categoriesGroup;
-
-	queue().defer(d3.json, "{% static 'districts.json' %}")
-	.defer(d3.json, "{% static 'pulse.json' %}")
-	.await(ready);
+	// load data assets
+	queue()
+	  .defer(d3.json, "{% static 'districts.json' %}")
+	  .defer(d3.json, "{% static 'pulse.json' %}")
+	  .await(ready);
     </script>
 
     <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
@@ -137,5 +126,4 @@
     <script type="text/javascript" src="{% static 'js/d3.geo.projection.v0.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap-modal.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/national-pulse.js' %}"></script>
-
 {% endblock %}
