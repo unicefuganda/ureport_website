@@ -38,18 +38,16 @@ var numberFormat = d3.format(".2f");
 
 // declare some vars here so they are available
 // in the browser console for debugging
-var data;
-var districts;
+var records;
+var recordsByDistrict;
 var shapes;
-var data1;
-var categories;
+var recordsByCategory;
 var debug = false;
-var total;
-var caseTypes;
-var categoriesGroup;
+var categories;
+var totalsByCategory;
 
 
-function ready(error, ug, category) {
+function ready(error, district_shapes, district_records) {
     var loading = document.getElementById("loading");
     if (error !== null) {
       // replace loading notice with error message
@@ -64,45 +62,44 @@ function ready(error, ug, category) {
     if (loading){
 	    loading.style.display = "none";
     }
-    // TODO handle error!
-    //data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
-    shapes = ug;
 
-    data = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
-    categories = data.dimension(function(d){
+    shapes = district_shapes;
+    records = crossfilter(_.map(district_records, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
+
+    recordsByCategory = records.dimension(function(d){
 	    return d['category']
     });
-    districts = data.dimension(function (d) {
+    recordsByDistrict = records.dimension(function (d) {
 	    return d["district"];
     });
-    caseDistricts = _.unique(_.pluck(districts, 'district'));
-    categoriesGroup = categories.group().reduceSum(function(d){return d.total});
+    districtNamesFromData = _.unique(_.pluck(recordsByDistrict, 'district'));
+    totalsByCategory = recordsByCategory.group().reduceSum(function(d){return d.total});
 
     // find all categories
-    caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
+    categories = _.unique(_.pluck(recordsByCategory.top(1000), 'category'));
     // prepend a category for 'no data'
-    caseTypes.unshift('no data');
+    categories.unshift('no data');
 
-    categoryColor = d3.scale.ordinal()
-      .domain(_.keys(caseTypes))
-      .range(colorbrewer.Set1[caseTypes.length]);
+    categoryColorScale = d3.scale.ordinal()
+      .domain(_.keys(categories))
+      .range(colorbrewer.Set1[categories.length]);
 
     // d3.map converts an object into something more like a python dict
     // that can be accessed by my_map.get('key') - its faster and more reliable
     // in most browsers
-    // this is taking the caseTypes and making a map of {name: index}
+    // this is taking the categories and making a map of {name: index}
     // (d3.map ['create a mapping'] is very different from _.map ['map a function over an array'])
-    dominant_mapper = d3.map(_.object(_.map(caseTypes, function(d, i){ return [d, i]})));
+    category_map = d3.map(_.object(_.map(categories, function(d, i){ return [d, i]})));
     // instead of a function, using a d3.map will be faster for lookups
     // _.invert returns a copy of the object with keys and values swapped,
-    // so instead of {name: index} like in dominant_mapper, this will have
+    // so instead of {name: index} like in category_map, this will have
     // a map of {index: name}
-    category_of = d3.map(_.invert(dominant_mapper));
+    category_of = d3.map(_.invert(category_map));
 
 
     // crossfilter group (map-reduce) for poll result counts and stats by district
     // see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
-    totalAnswersByDistrict = districts.group().reduce(
+    totalsByDistrict = recordsByDistrict.group().reduce(
       function(p, v) {
         // add function
         // reduce by sum
@@ -115,7 +112,7 @@ function ready(error, ug, category) {
         // then call _.max with an accessor function that finds the largest list based
         // on the value. and then get the key
         //p.dominant_name = _.max(_.pairs(p.totals), function(d) {return Math.max(d[1])})[0]
-        //p.dominant = dominant_mapper.get(p.dominant_name);
+        //p.dominant = category_map.get(p.dominant_name);
         // ...
         // but! we dont need these. the categoryList is sorted, so
         // _.last(p.categoryList) will be the dominant category
@@ -135,24 +132,24 @@ function ready(error, ug, category) {
         return {total: 0, categoryList: [], totals: {}};
       }
     );
-    //maxCategories = _.max(totalAnswersByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
+    //maxCategories = _.max(totalsByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
 
 
-    ugChart.width(width)
+    map.width(width)
       .height(height)
-      .dimension(districts)
+      .dimension(recordsByDistrict)
       .projection(projection)
-      .group(totalAnswersByDistrict)
+      .group(totalsByDistrict)
       .valueAccessor(function (p) {
         // prepare values (two item array)
         // used by charts: [category_number, count]
-        var dom = _.last(p.value.categoryList);
-        return [dominant_mapper.get(dom[0]), dom[1]];
+        var topcat = _.last(p.value.categoryList);
+        return [category_map.get(topcat[0]), topcat[1]];
       })
-      .overlayGeoJson(ug.features, "district", function (d) {
-	      if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
+      .overlayGeoJson(shapes.features, "district", function (d) {
+	      if (_.find(districtNamesFromData, function(x){ return x == d.properties.name; })){
           // if district name from map is the same
-          // as district name in cases, use it
+          // as district name in records, use it
           return d.properties.name;
 	      }
         // print debug info if district cannont be reconciled with map
@@ -163,21 +160,21 @@ function ready(error, ug, category) {
       })
       .colorAccessor(function(d, i){
         if (d) {
-          if (nationalPieChart.hasFilter()) {
+          if (categoryChart.hasFilter()) {
             // if a category is selected in the pie chart,
-            // color districts based on number of cases
+            // color districts based on number of records
             // for the category
             // TODO would be nice to use shades of the
             // category color instead of Reds
-            ugChart.colors(colorbrewer.Reds[9]);
+            map.colors(colorbrewer.Reds[9]);
             // TODO calculate upper bound!
-            ugChart.colorDomain([0, 1000])
+            map.colorDomain([0, 1000])
             return d[1];
           } else {
             // if no category is selected,
             // color districts based on the
             // district's dominant category
-            ugChart.colors(categoryColor)
+            map.colors(categoryColorScale)
             return d[0];
           }
         } else {
@@ -193,16 +190,16 @@ function ready(error, ug, category) {
       });
 
 
-    nationalPieChart
+    categoryChart
       .width(200)
       .height(200)
       .transitionDuration(1000)
-      .colors(categoryColor)
-      .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
+      .colors(categoryColorScale)
+      .colorAccessor(function(d, i){return _.indexOf(categories, d.data.key); })
       .radius(100)
       .innerRadius(30)
-      .dimension(categories)
-      .group(categoriesGroup)
+      .dimension(recordsByCategory)
+      .group(totalsByCategory)
       .renderLabel(true)
       .renderTitle(true);
 
@@ -211,13 +208,13 @@ function ready(error, ug, category) {
     // create legend
     var legend = d3.select('.legend');
     var legendItems = legend.selectAll('.legend-item')
-      .data(_.zip(categoryColor.domain(), categoryColor.range()));
+      .data(_.zip(categoryColorScale.domain(), categoryColorScale.range()));
 
     // append legend list items
     legendItems.enter().append('li')
-       .attr("style", function (d) { return "border-left: 18px solid " + categoryColor(d[0]) + ";"; })
+       .attr("style", function (d) { return "border-left: 18px solid " + categoryColorScale(d[0]) + ";"; })
     .append('span')
-       .attr("style", function (d) { return "background-color: #FFFFFF; width: 90px; color: " + categoryColor(d[0]) + ";"; })
+       .attr("style", function (d) { return "background-color: #FFFFFF; width: 90px; color: " + categoryColorScale(d[0]) + ";"; })
     .html(function(d) {
 	    return " " + category_of.get(d[0]);
     });

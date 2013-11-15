@@ -36,7 +36,7 @@
 			<div class="poll-pie">
 			    <div id="national-pie-chart" class="donut">
 				<span class="reset" style="display: none;">
-				  <a class="btn btn-default btn-mini" href="javascript:nationalPieChart.filterAll();dc.redrawAll();">reset</a>
+				  <a class="btn btn-default btn-mini" href="javascript:categoryChart.filterAll();dc.redrawAll();">reset</a>
 				  | {% trans "Filter word cloud with" %}
 				  <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a>
 			        </span>
@@ -86,8 +86,8 @@
 
     <script>
         // bind map and pie chart to DOM
-	var ugChart = dc.geoChoroplethChart("#ug-chart");
-	var nationalPieChart = dc.pieChart("#national-pie-chart")
+	var map = dc.geoChoroplethChart("#ug-chart");
+	var categoryChart = dc.pieChart("#national-pie-chart")
 
 	// parse map arguments
 	var raw_map_args = '{{ map_args }}';
