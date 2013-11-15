@@ -255,13 +255,13 @@ UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here
 UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
 UREPORT_PULSE_MAP_ARGS = {
     'center': {
-        'longitude': 1.5,
-        'latitude': 35
+        'longitude': 1.2,
+        'latitude': 36
     },
-    'width': 700,
-    'height': 540,
+    'width': 520,
+    'height': 450,
     'rotate': [-1, 11.5, -16.4],
     'parallels': [25, 35],
-    'scale': 5000
+    'scale': 4500
 }
 ########## END UREPORT API CONFIGURATION

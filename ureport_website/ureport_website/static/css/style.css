@@ -925,49 +925,8 @@ h4 {
 .poll-recent-content ul li { list-style:none; padding:10px 20px 10px 0; color:#fff; font-weight:bold }
 .poll-recent-content ul li a { color:#e8e8e8}
 .poll-recent-content ul li a:hover { color:#ccc}
-.poll-key { float:left;}
-.poll-key span{ color: #F00; font-weight:bold}
-.poll-pie { text-align:right; padding: 10px 0 0}
-.poll-map { }
 .poll-chart { padding:0 0 30px ;border-bottom:1px solid #e8e8e8 }
 .submit-button {padding:10px 0 0}
-
-.poll-key > div ul {
-	margin:0;
-	padding:10px 0 0
-}
-
-.poll-key li.key1 { 
-	list-style-position: outside;
-	background: url("../img/key1.gif") no-repeat 0 0;
-	padding:0px 0 0px 25px!important;
-	list-style:none;
-	line-height:1.6;
-}
-
-.poll-key li.key2 { 
-	list-style-position: outside;
-	background: url("../img/key2.gif") no-repeat 0 0;
-	padding:0px 0 0px 25px!important;
-	list-style:none;
-	line-height:1.6;
-}
-
-.poll-key li.key3 { 
-	list-style-position: outside;
-	background: url("../img/key3.gif") no-repeat 0 0;
-	padding:0px 0 0px 25px!important;
-	list-style:none;
-	line-height:1.6;
-}
-
-.poll-key li.key4 { 
-	list-style-position: outside;
-	background: url("../img/key4.gif") no-repeat 0 0;
-	padding:0px 0 0px 25px!important;
-	list-style:none;
-	line-height:1.6;
-}
 
 .step1 {
 	float:left;

@@ -211,13 +211,13 @@ function ready(error, ug, category) {
     });
 
     nationalPieChart
-    .width(400)
-    .height(350)
+    .width(200)
+    .height(200)
     .transitionDuration(1000)
     .colors(pieColor)
     .colorAccessor(function(d, i){return i;})
-    .radius(130)
-    .innerRadius(40)
+    .radius(100)
+    .innerRadius(30)
     .dimension(categories)
     .group(categoriesGroup)
     .renderLabel(true)
@@ -229,17 +229,16 @@ function ready(error, ug, category) {
     .domain(d3.range(0,8))
     .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
 
-    var legend = d3.select('.legend')
-    .attr("style", function (d) { return "margin-top: " + (height / 2.4) + "px;"; });
+    var legend = d3.select('.legend');
 
     var legendItems = legend.selectAll('.legend-item')
     .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
 
     legendItems.enter().append('li')
-    .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + "; width: 90px; border-style: double"; })
+       .attr("style", function (d) { return "border-left: 18px solid " + mapLegendColors(d[0]) + ";"; })
+    .append('span')
+       .attr("style", function (d) { return "background-color: #FFFFFF; width: 90px; color: " + mapLegendColors(d[0]) + ";"; })
     .html(function(d) {
 	return " " + category_of(d[0]);
     });
 }
-
-

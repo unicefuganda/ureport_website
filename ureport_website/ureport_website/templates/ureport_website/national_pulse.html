@@ -18,51 +18,46 @@
 
                     Hello UReporter, you've been selected to be one of our special reporters on Education. Tell us if you are a Parent/Guardian, Student, Teacher or Other. Thank you.
                     </div>
-                        
-                    <div class="poll-content">
-                        <div class="poll-key">
-
-                        <div class="reset-button">
-                            <div class="buttons"><button type="submit" value="1" class="btn btn-primary btn-mini">Today's pulse</button></div>
-                            <div class="buttons"><button type="submit" value="1" class="btn btn-primary btn-mini">This month's pulse</button></div>
-                            <div class="buttons"><button type="submit" value="1" class="btn btn-primary btn-mini">This year's pulse</button></div>
+		    <div id="controls">
+                        <div class="reset-button btn-group">
+                            <button type="submit" value="1" class="btn btn-primary btn-mini">Today's pulse</button>
+                            <button type="submit" value="1" class="btn btn-primary btn-mini">This month's pulse</button>
+                            <button type="submit" value="1" class="btn btn-primary btn-mini">This year's pulse</button>
                         </div>
-                        
-                        <!-- Placement of pulse map code -->
-				<div id="ug-chart"></div>
+			<div class="pulse-filter">
+			    <!-- Placement of pulse reset button code -->
+			    <a class="btn btn-default btn-mini" href="javascript:dc.filterAll();dc.redrawAll();">Reset to national pulse</a>
+			</div>
+
+                    </div>
+                    <div class="poll-content">
                         <!-- Placement of pulse pie code -->
 
 			<div class="poll-pie">
-			    <div id="national-pie-chart" class="donut control">
-				<a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-				<span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>
+			    <div id="national-pie-chart" class="donut">
+				<span class="reset" style="display: none;">
+				  <a class="btn btn-default btn-mini" href="javascript:nationalPieChart.filterAll();dc.redrawAll();">reset</a>
+				  | {% trans "Filter word cloud with" %}
+				  <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a>
+			        </span>
 			    </div>
 			</div>
-                        <div>
-                            Key
-                                <ul>
 
-                        <!-- Placement of pulse pie and map legend code -->
+                        <!-- Placement of pulse map code -->
+			<div id="ug-chart">
+				<span class="reset" style="display: none;">
+				  <a class="btn btn-default btn-mini" href="javascript:ugChart.filterAll();dc.redrawAll();">reset</a>
+                                  | Showing pulse for: <span class="filter" style="color: #F00; font-weight:bold;"></span>
+			        </span>
+			</div>
 
-                                    <li class="key1">Water</li>
-                                    <li class="key2">Violence against children</li>
-                                    <li class="key3">Health &amp; Nutrition</li>
-                                    <li class="key4">Education</li>
-                                </ul>
+                        <!-- Placement of map legend code -->
+                            <div class="legend">
                             </div>
-                        </div>
 
 			<div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
 			    Loading National Pulse... Please wait, This may take a while.<br/>
 			    <img src="{% static 'img/ajax-loader.gif' %}" style="padding-left: 40%">
-			</div>
-
-			<div class="pulse-filter">
-			    Showing pulse for <span>Mpigi</span>
-			    <!-- Placement of pulse reset button code -->
-			    <div class="buttons">
-				<a class="btn btn-default btn-mini" href="javascript:ugChart.filterAll();dc.redrawAll();">Reset to national pulse</a>
-			    </div>
 			</div>
 
                     </div>
@@ -92,7 +87,10 @@
 </div>
 
     <script>
-	$( "#loading" ).hide();
+	var loading = document.getElementById("loading");
+	if (loading) {
+	  loading.style.display = "none";
+	}
 
 	var numberFormat = d3.format(".2f");
 	var ugChart = dc.geoChoroplethChart("#ug-chart");
@@ -124,12 +122,13 @@
 
 	queue().defer(d3.json, "{% static 'districts.json' %}")
 	.defer(d3.json, "{% static 'pulse.json' %}")
-	.await(ready)
+	.await(ready);
     </script>
 
 {% endblock %}
 
 {% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pulse.css' %}"/>
     <script type="text/javascript" src="{% static 'js/d3.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/crossfilter.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/queue.min.js' %}"></script>
