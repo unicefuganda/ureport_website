@@ -25,14 +25,17 @@
 	    </div>
 
 	    <div class="container">
-		<!-- Placement of ap legend code -->
-		<div id="legend" class="pull-left"><ol class="legend"></ol></div>
-
-		<!-- Placement of pulse pie code -->
-		<div id="national-pie-chart" class="donut control pull-left"></div>
-
 		<!-- Placement of pulse map code -->
-		<div id="ug-chart"></div>
+		<div id="ug-chart" class="well well-small"></div>
+
+		<div>
+		    <!-- Placement of ap legend code -->
+		    <div id="legend_div"><ol class="legend"></ol></div>
+
+		    <!-- Placement of pulse pie code -->
+		    <div id="national-pie-chart" class="donut control"></div>
+		</div>
+
 	    </div>
 
 
@@ -75,11 +78,10 @@
 	var width = map_args.width
 	var height = map_args.height
 
-	var projection = d3.geo.albers()
-	.center([map_args.center.latitude, map_args.center.longitude])
-	.rotate(map_args.rotate)
-	.parallels(map_args.parallels)
-	.scale(map_args.scale);
+	var projection = d3.geo.mercator()
+	.center([map_args.center.longitude, map_args.center.latitude])
+	.scale(map_args.scale)
+	.translate([width / 2, height / 2]);
 
 	// declare some vars here so they are available
 	// in the browser console for debugging

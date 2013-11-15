@@ -230,7 +230,6 @@ function ready(error, ug, category) {
     .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
 
     var legend = d3.select('.legend')
-    .attr("style", function (d) { return "margin-top: " + (height / 2.4) + "px;"; });
 
     var legendItems = legend.selectAll('.legend-item')
     .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
