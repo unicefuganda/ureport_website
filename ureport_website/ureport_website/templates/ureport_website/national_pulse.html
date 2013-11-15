@@ -19,14 +19,11 @@
                     Hello UReporter, you've been selected to be one of our special reporters on Education. Tell us if you are a Parent/Guardian, Student, Teacher or Other. Thank you.
                     </div>
 		    <div id="controls">
-                        <div class="reset-button btn-group">
-                            <button type="submit" value="1" class="btn btn-primary btn-mini">Today's pulse</button>
-                            <button type="submit" value="1" class="btn btn-primary btn-mini">This month's pulse</button>
-                            <button type="submit" value="1" class="btn btn-primary btn-mini">This year's pulse</button>
-                        </div>
-			<div class="pulse-filter">
-			    <!-- Placement of pulse reset button code -->
-			    <a class="btn btn-default btn-mini" href="javascript:dc.filterAll();dc.redrawAll();">Reset to national pulse</a>
+			<div class="reset-button btn-toolbar">
+			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'today' %}"class="btn btn-primary btn-mini">Today's pulse</a></div>
+			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'month' %}" class="btn btn-primary btn-mini">This month's pulse</a></div>
+			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'year' %}" class="btn btn-primary btn-mini">This year's pulse</a></div>
+			  <div class="btn-group"><a href="javascript:dc.filterAll();dc.redrawAll();" class="btn btn-primary btn-mini">Reset</a></div>
 			</div>
 
                     </div>
@@ -36,24 +33,21 @@
 			<div class="poll-pie">
 			    <div id="national-pie-chart" class="donut">
 				<span class="reset" style="display: none;">
-				  <a class="btn btn-default btn-mini" href="javascript:categoryChart.filterAll();dc.redrawAll();">reset</a>
-				  | {% trans "Filter word cloud with" %}
+				  {% trans "Map showing pulse for" %}
 				  <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a>
 			        </span>
 			    </div>
 			</div>
 
                         <!-- Placement of pulse map code -->
-			<div id="ug-chart">
+			<div id="ug-chart" class="well well-small">
 				<span class="reset" style="display: none;">
-				  <a class="btn btn-default btn-mini" href="javascript:ugChart.filterAll();dc.redrawAll();">reset</a>
-                                  | Showing pulse for: <span class="filter" style="color: #F00; font-weight:bold;"></span>
+                                  Showing pulse for: <span class="filter" style="color: #F00; font-weight:bold;"></span>
 			        </span>
 			</div>
 
                         <!-- Placement of map legend code -->
-                            <div class="legend">
-                            </div>
+		            <div id="legend_div"><ol class="legend"></ol></div>
 
 			<div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
 			    Loading National Pulse... Please wait, This may take a while.<br/>
@@ -61,6 +55,7 @@
 			</div>
 
                     </div>
+
                 </div>
           
         <!-- AddThis Button BEGIN -->
@@ -74,8 +69,8 @@
                     <a class="addthis_button_linkedin"></a>
                     <a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
                 </div>
+            </div>
         </div>
-    </div>
     <!-- AddThis Button END -->
 
     <div class="sidebar">

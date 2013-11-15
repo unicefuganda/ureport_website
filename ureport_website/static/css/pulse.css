@@ -101,6 +101,10 @@
   float: left;
 }
 
+#ug-chart {
+  margin: 36px 0px 36px 0px;
+}
+
 .legend {
   float:left;
   width: 200px;

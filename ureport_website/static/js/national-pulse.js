@@ -200,7 +200,7 @@ function ready(error, district_shapes, district_records) {
       .innerRadius(30)
       .dimension(recordsByCategory)
       .group(totalsByCategory)
-      .renderLabel(true)
+      .renderLabel(false)
       .renderTitle(true);
 
     dc.renderAll();

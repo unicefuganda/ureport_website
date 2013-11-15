@@ -77,8 +77,8 @@ class PollsListView(TemplateView):
 
         result = get_polls()
 
-        if 'Error' in result:
-            print result['Error']
+        if 'error_message' in result:
+            print result['error_message']
         else:
             objects = result['objects']
             polls = sorted(objects, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
