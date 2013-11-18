@@ -12,28 +12,25 @@
     <div class="row-content">
         <div class="page-title">National Pulse</div>
                 <div class="main-content">
+
                     <div class="poll-question">
-
-                    <!-- Placement of pulse question code -->
-
-                    Hello UReporter, you've been selected to be one of our special reporters on Education. Tell us if you are a Parent/Guardian, Student, Teacher or Other. Thank you.
+                      <!-- Placement of pulse question code -->
+                      Hello UReporter, you've been selected to be one of our special reporters on Education. Tell us if you are a Parent/Guardian, Student, Teacher or Other. Thank you.
                     </div>
+
 		    <div id="controls">
-			<div class="reset-button btn-toolbar">
-			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'today' %}"class="btn btn-primary btn-mini">Today's pulse</a></div>
-			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'month' %}" class="btn btn-primary btn-mini">This month's pulse</a></div>
-			  <div class="btn-group"><a href="{% url 'website-national-pulse-detail' 'year' %}" class="btn btn-primary btn-mini">This year's pulse</a></div>
-			  <div class="btn-group"><a href="javascript:dc.filterAll();dc.redrawAll();" class="btn btn-primary btn-mini">Reset</a></div>
-			</div>
-
+		      <a href="{% url 'website-national-pulse-detail' 'today' %}"class="btn btn-primary btn-mini">Today's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'month' %}" class="btn btn-primary btn-mini">This month's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'year' %}" class="btn btn-primary btn-mini">This year's pulse</a>
+		      <a id="dc-reset" href="javascript:dc.filterAll();dc.redrawAll();" class="btn btn-mini btn-warning hidden">Reset</a>
                     </div>
+
                     <div class="poll-content">
                         <!-- Placement of pulse pie code -->
-
 			<div class="poll-pie">
-			    <div id="national-pie-chart" class="donut">
+			    <div id="national-pie-chart">
 				<span class="reset" style="display: none;">
-				  {% trans "Map showing pulse for" %}
+				  {% trans "Showing pulse for" %}
 				  <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a>
 			        </span>
 			    </div>
@@ -41,13 +38,14 @@
 
                         <!-- Placement of pulse map code -->
 			<div id="ug-chart" class="well well-small">
-				<span class="reset" style="display: none;">
-                                  Showing pulse for: <span class="filter" style="color: #F00; font-weight:bold;"></span>
-			        </span>
+			  <span class="reset" style="display: none;">
+                            {% trans "Showing pulse for" %}
+                            <span class="filter"></span>
+			  </span>
 			</div>
 
                         <!-- Placement of map legend code -->
-		            <div id="legend_div"><ol class="legend"></ol></div>
+		        <div id="legend_div"><ol class="legend well"></ol></div>
 
 			<div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
 			    Loading National Pulse... Please wait, This may take a while.<br/>
@@ -55,7 +53,6 @@
 			</div>
 
                     </div>
-
                 </div>
           
         <!-- AddThis Button BEGIN -->
@@ -78,36 +75,23 @@
 	<div class="page-ad"><img src="{% static 'img/become_rest.gif' %}" height="135" width="350"/></div>
     </div>
 </div>
+  <script>
+    // bind map and pie chart to DOM
+    var map = dc.geoChoroplethChart("#ug-chart");
+    var categoryChart = dc.pieChart("#national-pie-chart")
 
-    <script>
-        // bind map and pie chart to DOM
-	var map = dc.geoChoroplethChart("#ug-chart");
-	var categoryChart = dc.pieChart("#national-pie-chart")
+    // configure map for Uganda
+    configure('UG');
 
-	// parse map arguments
-	var raw_map_args = '{{ map_args }}';
-	var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
-	var map_args = JSON.parse(cleaned_map_args);
-	var width = map_args.width
-	var height = map_args.height
+    // load data assets
+    queue()
+      .defer(d3.json, "{% static 'districts.json' %}")
+      .defer(d3.json, "{% static 'pulse.json' %}")
+      .await(ready);
+  </script>
 
-	// define map projection
-	// use Albers because it is an equal area projection
-	var projection = d3.geo.albers()
-	  .center([map_args.center.latitude, map_args.center.longitude])
-	  .rotate(map_args.rotate)
-	  .parallels(map_args.parallels)
-	  .scale(map_args.scale);
-
-	// load data assets
-	queue()
-	  .defer(d3.json, "{% static 'districts.json' %}")
-	  .defer(d3.json, "{% static 'pulse.json' %}")
-	  .await(ready);
-    </script>
-
-    <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
-    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+  <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
 {% endblock %}
 
 {% block extra_head %}

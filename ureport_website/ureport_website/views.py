@@ -55,7 +55,6 @@ class NationalPulseView(TemplateView):
         context = super(NationalPulseView, self).get_context_data(**kwargs)
         context['pulse_json_url'] = settings.UREPORT_PULSE_WS
         context['pulse_districts_url'] = settings.UREPORT_PULSE_DISTRICT_WS
-        context['map_args'] = settings.UREPORT_PULSE_MAP_ARGS
         return context
 
 

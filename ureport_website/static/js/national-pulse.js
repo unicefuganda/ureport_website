@@ -46,21 +46,48 @@ var debug = false;
 var categories;
 var totalsByCategory;
 
+var width;
+var height;
+var projection;
+
+var map_configs = {
+  'UG': {
+    'center': {
+        'longitude': .8,
+        'latitude': 35.95
+    },
+    'width': 500,
+    'height': 420,
+    'rotate': [-1, 11.5, -16.4],
+    'parallels': [25, 35],
+    'scale': 4500
+  },
+};
+
+function configure(country) {
+  country_config = map_configs[country];
+
+	width = country_config.width;
+	height = country_config.height;
+
+  projection = d3.geo.albers()
+	  .center([country_config.center.latitude, country_config.center.longitude])
+	  .rotate(country_config.rotate)
+	  .parallels(country_config.parallels)
+	  .scale(country_config.scale);
+}
 
 function ready(error, district_shapes, district_records) {
-    var loading = document.getElementById("loading");
+    var loading = d3.select("#loading");
     if (error !== null) {
       // replace loading notice with error message
       // if assets do not load properly
-      loading = false;
-      d3.select('#loading')
+      loading
         .attr('style', "position: absolute; top: 0; left: 42%; z-index: 56; background: #ff0000; color: #ffffff;")
         .html('Oops. An error has occured. Please try again later.');
-    }
-
-    // hide loading notice
-    if (loading){
-	    loading.style.display = "none";
+    } else {
+      // hide loading notice if there is no error
+	    loading.classed("hidden", true);
     }
 
     shapes = district_shapes;
@@ -80,9 +107,15 @@ function ready(error, district_shapes, district_records) {
     // prepend a category for 'no data'
     categories.unshift('no data');
 
-    categoryColorScale = d3.scale.ordinal()
+    // modified version of colorbrewer.Set1 (made yellow darker)
+    // TODO what if number of categories changes?
+    categoryColors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffd92f","#a65628","#f781bf"];
+    // create ordinal color scale for categories
+    categoriesColorScale = d3.scale.ordinal()
       .domain(_.keys(categories))
-      .range(colorbrewer.Set1[categories.length]);
+      .range(categoryColors);
+
+      
 
     // d3.map converts an object into something more like a python dict
     // that can be accessed by my_map.get('key') - its faster and more reliable
@@ -132,7 +165,6 @@ function ready(error, district_shapes, district_records) {
         return {total: 0, categoryList: [], totals: {}};
       }
     );
-    //maxCategories = _.max(totalsByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
 
 
     map.width(width)
@@ -164,17 +196,30 @@ function ready(error, district_shapes, district_records) {
             // if a category is selected in the pie chart,
             // color districts based on number of records
             // for the category
-            // TODO would be nice to use shades of the
-            // category color instead of Reds
-            map.colors(colorbrewer.Reds[9]);
-            // TODO calculate upper bound!
-            map.colorDomain([0, 1000])
+
+            // determine max category count for filtered districts
+            var max = recordsByDistrict.group()
+              .reduceSum(function(d){ return d.total; })
+              .top(1)[0].value;
+
+            // create linear color scale from white to the category color
+            var scale = d3.scale.linear()
+              .range(["#FFFFFF", categoriesColorScale(d[0])])
+              .domain([0, max]);
+            // generate colors
+            var colors = _.map(d3.range(0, max, parseInt(max / 10.0)), function(n) { return scale(n); });
+
+            // set colors and domain for map
+            map.colors(colors);
+            map.colorDomain([0, max])
+            // use total count as colorAccessor
             return d[1];
           } else {
             // if no category is selected,
             // color districts based on the
             // district's dominant category
-            map.colors(categoryColorScale)
+            map.colors(categoriesColorScale)
+            // use category as colorAccessor
             return d[0];
           }
         } else {
@@ -189,15 +234,14 @@ function ready(error, district_shapes, district_records) {
         return title_text;
       });
 
-
     categoryChart
       .width(200)
       .height(200)
       .transitionDuration(1000)
-      .colors(categoryColorScale)
+      .colors(categoriesColorScale)
       .colorAccessor(function(d, i){return _.indexOf(categories, d.data.key); })
       .radius(100)
-      .innerRadius(30)
+      .innerRadius(0)
       .dimension(recordsByCategory)
       .group(totalsByCategory)
       .renderLabel(false)
@@ -205,17 +249,57 @@ function ready(error, district_shapes, district_records) {
 
     dc.renderAll();
 
+    // toggle visibility of reset button
+    function toggleResetButton() {
+      reset = d3.select("#dc-reset");
+      if (categoryChart.hasFilter() || map.hasFilter()) {
+        // remove "hidden" class if any chart is filtered
+        return reset.classed("hidden", false);
+      };
+      // otherwise hide reset button
+      return reset.classed("hidden", true);
+    };
+
+    // listen for filter events
+    map.on("filtered", function(chart, filter) {
+      toggleResetButton(); 
+    });
+
+    // listen for filter events
+    categoryChart.on("filtered", function(chart, filter) {
+      toggleResetButton(); 
+
+      var legend_items = d3.selectAll('.legend-item');
+      if (filter) {
+        // lighten non-selected legend items if filtered
+        legend_items.classed("lighter", function(d) {
+          return parseInt(d[0]) !== category_map.get(filter)
+        });
+      } else {
+        // otherwise leave the regular color
+        legend_items.classed("lighter", false);
+      };
+    });
+
+
     // create legend
     var legend = d3.select('.legend');
     var legendItems = legend.selectAll('.legend-item')
-      .data(_.zip(categoryColorScale.domain(), categoryColorScale.range()));
+      .data(_.zip(categoriesColorScale.domain(), categoriesColorScale.range()));
 
     // append legend list items
-    legendItems.enter().append('li')
-       .attr("style", function (d) { return "border-left: 18px solid " + categoryColorScale(d[0]) + ";"; })
-    .append('span')
-       .attr("style", function (d) { return "background-color: #FFFFFF; width: 90px; color: " + categoryColorScale(d[0]) + ";"; })
-    .html(function(d) {
-	    return " " + category_of.get(d[0]);
+    legendItems.enter()
+      .append('li')
+        .attr("style", function (d) {
+          return "border-left: 18px solid " + categoriesColorScale(d[0]) + ";";
+        })
+        .attr("class", function(d) { return "legend-item"; })
+        .attr("id", function(d) { return "category-" + d[0]; })
+      .append('span')
+        .attr("style",
+          function (d) { return "width: 90px; color: " + categoriesColorScale(d[0]) + ";";
+        })
+        .html(function(d) {
+          return " " + category_of.get(d[0]);
     });
 }
