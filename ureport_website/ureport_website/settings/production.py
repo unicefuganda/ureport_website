@@ -50,13 +50,26 @@ SERVER_EMAIL = EMAIL_HOST_USER
 ########## END EMAIL CONFIGURATION
 
 ########## DATABASE CONFIGURATION
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ureport_website',
+        'HOST': 'localhost',
+        'USER': 'postgres',
+        'PORT': '6543',
+    },
+}
 ########## END DATABASE CONFIGURATION
 
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
-CACHES = {}
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 ########## END CACHE CONFIGURATION
 
 
@@ -64,3 +77,12 @@ CACHES = {}
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = get_env_setting('SECRET_KEY')
 ########## END SECRET CONFIGURATION
+
+########## UREPORT API CONFIGURATION
+UREPORT_API_USERNAME = get_env_setting('UREPORT_API_USERNAME')
+UREPORT_API_KEY = get_env_setting('UREPORT_API_KEY')
+UREPORT_API_BASE = 'http://ureport.ug/api/v1/'
+UREPORT_API_LIMIT = 0
+UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
+UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
+########## END UREPORT API CONFIGURATION
