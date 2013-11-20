@@ -91,7 +91,11 @@ function ready(error, district_shapes, district_records) {
     }
 
     shapes = district_shapes;
-    records = crossfilter(_.map(district_records, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
+    records = crossfilter(_.map(district_records, function(p){
+      // ensure that each record has a placeholder category
+      // if it doesn't have a real category
+      return _.defaults(p, {'category': 'irrelevant'})
+    }))
 
     recordsByCategory = records.dimension(function(d){
 	    return d['category']
@@ -107,14 +111,14 @@ function ready(error, district_shapes, district_records) {
     // prepend a category for 'no data'
     categories.unshift('no data');
 
-    // modified version of colorbrewer.Set1 (made yellow darker)
+    // modified version of colorbrewer.Set1 (made yellow darker so legend text
+    // is legible)
     // TODO what if number of categories changes?
     categoryColors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffd92f","#a65628","#f781bf"];
     // create ordinal color scale for categories
     categoriesColorScale = d3.scale.ordinal()
       .domain(_.keys(categories))
       .range(categoryColors);
-
       
 
     // d3.map converts an object into something more like a python dict
@@ -198,6 +202,8 @@ function ready(error, district_shapes, district_records) {
             // for the category
 
             // determine max category count for filtered districts
+            // (recordsByDistrict will always reflect any current
+            // filters because crossfilter is awesome like that)
             var max = recordsByDistrict.group()
               .reduceSum(function(d){ return d.total; })
               .top(1)[0].value;
