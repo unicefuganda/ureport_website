@@ -86,7 +86,7 @@
     // load data assets
     queue()
       .defer(d3.json, "{% static 'districts.json' %}")
-      .defer(d3.json, "{% static 'pulse.json' %}")
+      .defer(d3.json, "{{ pulse_json_url }}")
       .await(ready);
   </script>
 
