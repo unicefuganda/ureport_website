@@ -19,7 +19,8 @@
                     </div>
 
 		    <div id="controls">
-		      <a href="{% url 'website-national-pulse-detail' 'today' %}"class="btn btn-primary btn-mini">Today's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'day' %}"class="btn btn-primary btn-mini">Today's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'week' %}"class="btn btn-primary btn-mini">This week's pulse</a>
 		      <a href="{% url 'website-national-pulse-detail' 'month' %}" class="btn btn-primary btn-mini">This month's pulse</a>
 		      <a href="{% url 'website-national-pulse-detail' 'year' %}" class="btn btn-primary btn-mini">This year's pulse</a>
 		      <a id="dc-reset" href="javascript:dc.filterAll();dc.redrawAll();" class="btn btn-mini btn-warning hidden">Reset</a>
@@ -86,7 +87,7 @@
     // load data assets
     queue()
       .defer(d3.json, "{% static 'districts.json' %}")
-      .defer(d3.json, "{{ pulse_json_url }}")
+      .defer(d3.json, "{{ pulse_json_url }}{{ pulse_json_period }}")
       .await(ready);
   </script>
 

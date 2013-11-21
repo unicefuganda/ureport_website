@@ -9,6 +9,7 @@ from .views import SiteIndexView
 from .views import AboutView
 from .views import EngageView
 from .views import NationalPulseView
+from .views import NationalPulsePeriodView
 from .views import PollsListView
 from .views import PollDetailView
 from .views import PollSearchView
@@ -50,7 +51,7 @@ urlpatterns = patterns(
     ),
     url(
         r'^national-pulse/(?P<period>\w+)/$',
-        NationalPulseView.as_view(),
+        NationalPulsePeriodView.as_view(),
         name='website-national-pulse-detail'
     ),
 
