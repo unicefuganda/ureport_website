@@ -20,7 +20,7 @@ def get_env_setting(setting):
 
 ########## HOST CONFIGURATION
 # See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [127.0.0.1]
 ########## END HOST CONFIGURATION
 
 ########## EMAIL CONFIGURATION
@@ -67,7 +67,8 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+         'LOCATION': '127.0.0.1:11211',
+         'PREFIX': 'ureport-website-',
     }
 }
 ########## END CACHE CONFIGURATION
