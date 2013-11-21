@@ -15,11 +15,12 @@
 
                     <div class="poll-question">
                       <!-- Placement of pulse question code -->
-                      Hello UReporter, you've been selected to be one of our special reporters on Education. Tell us if you are a Parent/Guardian, Student, Teacher or Other. Thank you.
+                      Welcome to the National Pulse, you can now see what is trending in the U-report community.
                     </div>
 
 		    <div id="controls">
-		      <a href="{% url 'website-national-pulse-detail' 'today' %}"class="btn btn-primary btn-mini">Today's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'day' %}"class="btn btn-primary btn-mini">Today's pulse</a>
+		      <a href="{% url 'website-national-pulse-detail' 'week' %}"class="btn btn-primary btn-mini">This week's pulse</a>
 		      <a href="{% url 'website-national-pulse-detail' 'month' %}" class="btn btn-primary btn-mini">This month's pulse</a>
 		      <a href="{% url 'website-national-pulse-detail' 'year' %}" class="btn btn-primary btn-mini">This year's pulse</a>
 		      <a id="dc-reset" href="javascript:dc.filterAll();dc.redrawAll();" class="btn btn-mini btn-warning hidden">Reset</a>
@@ -86,7 +87,11 @@
     // load data assets
     queue()
       .defer(d3.json, "{% static 'districts.json' %}")
-      .defer(d3.json, "{% static 'pulse.json' %}")
+      {% if pulse_json_period %}
+      .defer(d3.json, "{{ pulse_json_url }}{{ pulse_json_period }}/")
+      {% else %}
+      .defer(d3.json, "{{ pulse_json_url }}")
+      {% endif %}
       .await(ready);
   </script>
 
