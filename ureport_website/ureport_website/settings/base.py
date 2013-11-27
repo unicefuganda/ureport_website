@@ -248,7 +248,7 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 
 ########## UREPORT API CONFIGURATION
 UREPORT_API_BASE = 'http://ureport.ug/api/v1/'
-UREPORT_API_LIMIT = 0
+UREPORT_API_LIMIT = 50
 UREPORT_API_USERNAME = 'developer'
 UREPORT_API_KEY = '10cb98c8f425edfcfaf92bded4a856a170777be1'
 UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
