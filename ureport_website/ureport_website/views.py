@@ -1,23 +1,35 @@
 import simplejson
 import urllib
 import re
+import logging
 
 from django.views.generic import TemplateView, DetailView, ListView
 from django.conf import settings
+from django.core.cache import cache
 
 from .models import Partners, Quotes, Read, Watch
 
+logger = logging.getLogger(__name__)
 
 def get_polls():
+    cache_key = 'poll_data'
+    cache_timeout = 3600 # 1 hour
+    data = cache.get(cache_key)
+    if data:
+        logger.debug("returning poll data from the cache")
+        return data
+
     api_base = settings.UREPORT_API_BASE
     args = {
         'limit': settings.UREPORT_API_LIMIT,
         'username': settings.UREPORT_API_USERNAME,
         'api_key': settings.UREPORT_API_KEY,
-        'format': 'json',
     }
-    url = api_base + '/polls/?' + urllib.urlencode(args)
-    return simplejson.load(urllib.urlopen(url))
+    url = api_base + 'polls/?' + urllib.urlencode(args)
+    logger.debug("calling url: %s" % url)
+    data = simplejson.load(urllib.urlopen(url))
+    cache.set(cache_key, data, cache_timeout)
+    return data
 
 
 def get_read_list():
@@ -87,13 +99,14 @@ class PollsListView(TemplateView):
 
         result = get_polls()
 
-        if 'error_message' in result:
-            print result['error_message']
-        else:
-            objects = result['objects']
-            polls = sorted(objects, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
-            context['polls'] = polls[:50]
-            context['recent_polls'] = polls[:5]
+        if result:
+            if 'error_message' in result:
+                print result['error_message']
+            else:
+                objects = result['objects']
+                polls = sorted(objects, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
+                context['polls'] = polls[:50]
+                context['recent_polls'] = polls[:5]
         return context
 
 
@@ -113,15 +126,16 @@ class PollSearchView(TemplateView):
 
         result = get_polls()
 
-        if 'Error' in result:
-            print result['Error']
-        else:
-            prog = re.compile(search_term)
-            objects = result['objects']
-            p = [poll for poll in objects if prog.search(poll['question'])]
-            polls = sorted(p, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
-            context['polls'] = p[:50]
-            context['recent_polls'] = polls[:5]
+        if result:
+            if 'Error' in result:
+                print result['Error']
+            else:
+                prog = re.compile(search_term)
+                objects = result['objects']
+                p = [poll for poll in objects if prog.search(poll['question'])]
+                polls = sorted(p, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
+                context['polls'] = p[:50]
+                context['recent_polls'] = polls[:5]
         return context
 
 
