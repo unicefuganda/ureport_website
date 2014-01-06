@@ -107,4 +107,10 @@ urlpatterns = patterns(
         WatchDetailView.as_view(),
         name='website-watch-detail'
     ),
+
+    # favicon
+    url(
+        r'^favicon\.ico$',
+        RedirectView.as_view(url=settings.STATIC_URL + 'ico/favicon.png')
+    )
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
