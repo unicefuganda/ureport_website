@@ -1,16 +1,17 @@
 # ureport_website/models.py
 
 from django.db import models
+from mezzanine.pages.models import Page
 
 
-class Partners(models.Model):
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, max_length=255)
+class Partners(Page):
+    #title = models.CharField(max_length=255)
+    #slug = models.SlugField(unique=True, max_length=255)
     image = models.ImageField(upload_to='%Y/%m/%d')
     content = models.TextField()
     website = models.CharField(max_length=255)
     published = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
+    #created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'UReport Partner'

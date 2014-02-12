@@ -1,38 +1,34 @@
 # ureport_website/urls.py
 
+from __future__ import unicode_literals
+
 from django.conf import settings
-from django.conf.urls import patterns, url, include
+from django.conf.urls import include, patterns, url
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 
-from .views import SiteIndexView
-from .views import AboutView
-from .views import EngageView
-from .views import NationalPulseView
-from .views import NationalPulsePeriodView
-from .views import PollsListView
-from .views import PollDetailView
-from .views import PollSearchView
-from .views import PartnersListView
-from .views import PartnersDetailView
-from .views import ReadListView
-from .views import ReadDetailView
-from .views import WatchListView
-from .views import WatchDetailView
-
+from .views import (AboutView, EngageView, NationalPulsePeriodView,
+                    NationalPulseView, PartnersDetailView, PartnersListView,
+                    PollDetailView, PollSearchView, PollsListView,
+                    ReadDetailView, ReadListView, SiteIndexView,
+                    WatchDetailView, WatchListView)
 
 admin.autodiscover()
 
-urlpatterns = patterns(
+urlpatterns = i18n_patterns(
+    "",
+    # Change the admin prefix here to use an alternate URL for the
+    # admin interface, which would be marginally more secure.
+    ("^admin/", include(admin.site.urls)),
+)
+
+urlpatterns += patterns(
     '',
-    url(
-        r'^admin/',
-        include(admin.site.urls)
-    ),
     url(
         r'^$',
         SiteIndexView.as_view(),
-        name="website-index"
+        name="home"
     ),
     url(
         '^about-ureport$',
@@ -107,4 +103,12 @@ urlpatterns = patterns(
         WatchDetailView.as_view(),
         name='website-watch-detail'
     ),
+
+    ("^", include("mezzanine.urls")),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# Adds ``STATIC_URL`` to the context of error pages, so that error
+# pages can use JS, CSS and images.
+handler404 = "mezzanine.core.views.page_not_found"
+handler500 = "mezzanine.core.views.server_error"

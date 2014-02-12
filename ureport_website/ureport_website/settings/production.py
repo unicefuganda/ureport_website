@@ -67,8 +67,8 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-         'LOCATION': '127.0.0.1:11211',
-         'PREFIX': 'ureport-website-',
+        'LOCATION': '127.0.0.1:11211',
+        'PREFIX': 'ureport-website-',
     }
 }
 ########## END CACHE CONFIGURATION
@@ -77,6 +77,7 @@ CACHES = {
 ########## SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = get_env_setting('SECRET_KEY')
+NEVERCACHE_KEY = get_env_setting("NEVERCACHE_KEY")
 ########## END SECRET CONFIGURATION
 
 ########## UREPORT API CONFIGURATION
@@ -87,3 +88,20 @@ UREPORT_API_LIMIT = 0
 UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
 UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
 ########## END UREPORT API CONFIGURATION
+
+####################
+# DYNAMIC SETTINGS #
+####################
+
+# set_dynamic_settings() will rewrite globals based on what has been
+# defined so far, in order to provide some better defaults where
+# applicable. We also allow this settings module to be imported
+# without Mezzanine installed, as the case may be when using the
+# fabfile, where setting the dynamic settings below isn't strictly
+# required.
+try:
+    from mezzanine.utils.conf import set_dynamic_settings
+except ImportError:
+    pass
+else:
+    set_dynamic_settings(globals())

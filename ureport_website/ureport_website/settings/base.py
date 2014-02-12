@@ -1,13 +1,14 @@
 """Common settings and globals."""
 
 
+from __future__ import absolute_import, unicode_literals
+
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 
-
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
-DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+DJANGO_ROOT = dirname(dirname(dirname(abspath(__file__))))
 
 # Absolute filesystem path to the top-level project folder:
 SITE_ROOT = dirname(DJANGO_ROOT)
@@ -79,7 +80,7 @@ USE_TZ = True
 
 ########## MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
+MEDIA_ROOT = normpath(join(DJANGO_ROOT, 'media'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
@@ -88,14 +89,14 @@ MEDIA_URL = '/media/'
 
 ########## STATIC FILE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
+STATIC_ROOT = normpath(join(DJANGO_ROOT, 'assets'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
-    normpath(join(SITE_ROOT, 'static')),
+    normpath(join(DJANGO_ROOT, 'static')),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -123,7 +124,7 @@ ALLOWED_HOSTS = []
 ########## FIXTURE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
-    normpath(join(SITE_ROOT, 'fixtures')),
+    normpath(join(DJANGO_ROOT, 'fixtures')),
 )
 ########## END FIXTURE CONFIGURATION
 
@@ -139,6 +140,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
+    'mezzanine.conf.context_processors.settings',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
@@ -149,21 +151,35 @@ TEMPLATE_LOADERS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
 TEMPLATE_DIRS = (
-    normpath(join(SITE_ROOT, 'templates')),
+    normpath(join(DJANGO_ROOT, 'templates')),
 )
 ########## END TEMPLATE CONFIGURATION
 
 
 ########## MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
+
+# List of middleware classes to use. Order is important; in the request phase,
+# these middleware classes will be applied in the order given, and in the
+# response phase the middleware will be applied in reverse order.
 MIDDLEWARE_CLASSES = (
-    # Default Django middleware.
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "mezzanine.core.middleware.UpdateCacheMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "mezzanine.core.request.CurrentRequestMiddleware",
+    "mezzanine.core.middleware.RedirectFallbackMiddleware",
+    "mezzanine.core.middleware.TemplateForDeviceMiddleware",
+    "mezzanine.core.middleware.TemplateForHostMiddleware",
+    "mezzanine.core.middleware.AdminLoginInterfaceSelectorMiddleware",
+    "mezzanine.core.middleware.SitePermissionMiddleware",
+    # Uncomment the following if using any of the SSL settings:
+    # "mezzanine.core.middleware.SSLRedirectMiddleware",
+    "mezzanine.pages.middleware.PageMiddleware",
+    "mezzanine.core.middleware.FetchFromCacheMiddleware",
 )
 ########## END MIDDLEWARE CONFIGURATION
 
@@ -196,6 +212,19 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     # Database migration helpers:
     'south',
+
+    # Mezzanine apps
+    "mezzanine.boot",
+    "mezzanine.conf",
+    "mezzanine.core",
+    "mezzanine.generic",
+    "mezzanine.blog",
+    "mezzanine.forms",
+    "mezzanine.pages",
+    "mezzanine.galleries",
+    "mezzanine.twitter",
+    #"mezzanine.accounts",
+    #"mezzanine.mobile",
 )
 
 # Apps specific for this project go here.
@@ -254,3 +283,43 @@ UREPORT_API_KEY = '10cb98c8f425edfcfaf92bded4a856a170777be1'
 UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
 UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
 ########## END UREPORT API CONFIGURATION
+
+USE_SOUTH = True
+
+# Supported languages
+_ = lambda s: s
+LANGUAGES = (
+    ('en', _('English')),
+)
+
+# Whether a user's session cookie expires when the Web browser is closed.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTHENTICATION_BACKENDS = ("mezzanine.core.auth_backends.MezzanineBackend",)
+
+# The numeric mode to set newly-uploaded files to. The value should be
+# a mode you'd pass directly to os.chmod.
+FILE_UPLOAD_PERMISSIONS = 0o644
+
+# Every cache key will get prefixed with this value - here we set it to
+# the name of the directory the project is in to try and use something
+# project specific.
+CACHE_MIDDLEWARE_KEY_PREFIX = SITE_NAME
+
+# Store these package names here as they may change in the future since
+# at the moment we are using custom forks of them.
+PACKAGE_NAME_FILEBROWSER = "filebrowser_safe"
+PACKAGE_NAME_GRAPPELLI = "grappelli_safe"
+
+#########################
+# OPTIONAL APPLICATIONS #
+#########################
+
+# These will be added to ``INSTALLED_APPS``, only if available.
+OPTIONAL_APPS = (
+    "debug_toolbar",
+    "django_extensions",
+    "compressor",
+    PACKAGE_NAME_FILEBROWSER,
+    PACKAGE_NAME_GRAPPELLI,
+)

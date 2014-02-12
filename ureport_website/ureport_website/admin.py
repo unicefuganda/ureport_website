@@ -1,10 +1,12 @@
 from django.contrib import admin
-from .models import Partners, Read, Watch, Quotes
+from mezzanine.pages.admin import PageAdmin
+
+from .models import Partners, Quotes, Read, Watch
 
 
-class PartnersAdmin(admin.ModelAdmin):
+class PartnersAdmin(PageAdmin):
 # fields display on change list
-    list_display = ['title', 'created']
+    list_display = ['title', 'created', 'status']
 # fields to filter the change list with
     list_filter = ['published', 'created']
 # fields to search in change list
@@ -64,3 +66,4 @@ admin.site.register(Partners, PartnersAdmin)
 admin.site.register(Watch, WatchAdmin)
 admin.site.register(Read, ReadAdmin)
 admin.site.register(Quotes, QuotesAdmin)
+
