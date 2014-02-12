@@ -1,4 +1,4 @@
-Django==1.6
+mezzanine
 bpython
 django-braces
 django-model-utils
@@ -8,4 +8,3 @@ psycopg2
 pillow
 pytz
 simplejson
-mezzanine
