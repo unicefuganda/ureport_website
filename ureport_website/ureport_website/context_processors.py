@@ -9,8 +9,8 @@ import simplejson
 logger = logging.getLogger(__name__)
 
 
-def get_contacts():
-    cache_key = 'contact_data'
+def get_contacts_metadata():
+    cache_key = 'contact_meta_data'
     cache_timeout = 3600  # 1 hour
     data = cache.get(cache_key)
     if data:
@@ -19,7 +19,7 @@ def get_contacts():
 
     api_base = settings.UREPORT_API_BASE
     args = {
-        'limit': 1,
+        'meta_only': 'true',
         'username': settings.UREPORT_API_USERNAME,
         'api_key': settings.UREPORT_API_KEY,
     }
@@ -31,7 +31,7 @@ def get_contacts():
 
 
 def ureporter_count(request):
-    results = get_contacts()
+    results = get_contacts_metadata()
     if 'Error' in results:
         total_count = 0
     else:
