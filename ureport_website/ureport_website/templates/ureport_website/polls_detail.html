@@ -10,40 +10,23 @@
 
 <div class="site-wrapper">
     <div class="row-content">
-        <div class="page-title">Polls</div>
-                <div class="main-content">
-                    <div class="poll-search-content">
-                        <ul>
-			    {% for poll in polls %}
-			    <li>{{ poll.question }}
-                <div>
-                        <div class="date_orange2">{{ poll.start_date }}</div>
-			            <div class="responses_orange2">{{ poll.response_count }} responses from {{ poll.contacts_count }} participants ({{ poll.response_rate|floatformat }}%)</div>
-	  		        </div>
-			    </li>
-
-			    {% endfor %}
-			</ul>
-                    </div>
-	    {% if is_paginated %}
-		<div class="pagination">
-		    <span class="step-links">
-			{% if page_obj.has_previous %}
-			    <a href="?page={{ page_obj.previous_page_number }}">Prev</a>
-			{% endif %}
-
-			<span class="current">
-			    Page {{ page_obj.number }} of {{ paginator.num_pages }}.
-			</span>
-
-			{% if page_obj.has_next %}
-			    <a href="?page={{ page_obj.next_page_number }}">Next</a>
-			{% endif %}
-		    </span>
-		</div>
-	    {% endif %}
+        <div class="page-title">
+            Poll: {{ poll.name }}
         </div>
-          
+
+        <div class="main-content">
+            <table class='table'>
+                <tr><td>Name<td><td>{{ poll.name }}</td></tr>
+                <tr><td>Question<td><td>{{ poll.question }}</td></tr>
+                <tr><td>Categories<td><td>{{ poll.categories }}  </td></tr>
+                <tr><td>No of Receipients<td><td>{{ poll.contacts_count}}</td></tr>
+                <tr><td>No of Responses<td><td>{{ poll.response_count }}</td></tr>
+                <tr><td>Response Rate<td><td>{{ poll.response_rate|floatformat }}%</td></tr>
+                <tr><td>Start date<td><td>{{ poll.start_date }}</td></tr>
+                <tr><td>End date<td><td>{{ poll.end_date }}</td></tr>
+            </table>
+        </div>
+
         <!-- AddThis Button BEGIN -->
         <div class="sharebar">
             <div class="addthis_toolbox addthis_default_style addthis_16x16_style">

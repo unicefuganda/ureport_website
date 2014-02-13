@@ -117,6 +117,25 @@ class PollsListView(TemplateView):
 class PollDetailView(TemplateView):
     template_name = 'ureport_website/polls_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(PollDetailView, self).get_context_data(**kwargs)
+        id = self.kwargs['object_id']
+        result = get_polls()
+
+        p = None
+        if result:
+            if 'Error' in result:
+                print result['Error']
+            else:
+                objects = result['objects']
+                p = (poll for poll in objects if poll['id'] == id).next()
+                polls = sorted(objects, cmp=lambda x, y: cmp(x['start_date'], y['start_date']), key=None, reverse=True)
+                context['polls'] = polls[:50]
+                context['recent_polls'] = polls[:5]
+                context['poll'] = p
+
+        return context
+
 
 class PollSearchView(TemplateView):
     template_name = 'ureport_website/polls_search_results.html'
