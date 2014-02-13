@@ -68,9 +68,10 @@ class NationalPulseView(TemplateView):
     template_name = 'ureport_website/national_pulse.html'
 
     def get_context_data(self, **kwargs):
+        period = 'day'
         context = super(NationalPulseView, self).get_context_data(**kwargs)
-        context['pulse_json_url'] = settings.UREPORT_PULSE_WS
-        context['pulse_json_period'] = ''
+        context['pulse_json_url'] = '%s/%s.json' %(settings.UREPORT_PULSE_WS, period)
+        context['pulse_json_period'] = period
         context['pulse_districts_url'] = settings.UREPORT_PULSE_DISTRICT_WS
         return context
 
@@ -79,9 +80,10 @@ class NationalPulsePeriodView(TemplateView):
     template_name = 'ureport_website/national_pulse.html'
 
     def get_context_data(self, **kwargs):
+        period = self.kwargs['period']
         context = super(NationalPulsePeriodView, self).get_context_data(**kwargs)
-        context['pulse_json_url'] = settings.UREPORT_PULSE_WS
-        context['pulse_json_period'] = self.kwargs['period']
+        context['pulse_json_url'] = '%s/%s.json' %(settings.UREPORT_PULSE_WS, period)
+        context['pulse_json_period'] = period
         context['pulse_districts_url'] = settings.UREPORT_PULSE_DISTRICT_WS
         return context
 
