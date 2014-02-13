@@ -15,9 +15,9 @@
                         <ul>
 			    {% for poll in polls %}
 			    <li>{{ poll.question }}
-				<div>
-				    <div class="date_orange2">{{ poll.start_date }}</div>
-			            <div class="responses_orange2">{{ poll.response_count }} responses from {{ poll.contacts.count }} participants ({{ poll.response_rate }}%)</div>
+                <div>
+                        <div class="date_orange2">{{ poll.start_date }}</div>
+			            <div class="responses_orange2">{{ poll.response_count }} responses from {{ poll.contacts_count }} participants ({{ poll.response_rate|floatformat }}%)</div>
 	  		        </div>
 			    </li>
 
@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="page-searchtools">
-	    <form class="" action="{% url 'website-polls-search' %}">
+	    <form class="" action="">
                 <input name="q" type="text" class="input-block-level" placeholder="search polls by question or keyword">
                 <div class="endmonth"><button type="submit" value="1" class="btn">Search</button></div>                   
             </form>

@@ -1,12 +1,13 @@
-import simplejson
-import urllib
-import re
 import logging
+import re
+import urllib
+from datetime import datetime, timedelta
 
-from django.views.generic import TemplateView, DetailView, ListView
 from django.conf import settings
 from django.core.cache import cache
+from django.views.generic import DetailView, ListView, TemplateView
 
+import simplejson
 from .models import Partners, Quotes, Read, Watch
 
 logger = logging.getLogger(__name__)
@@ -19,11 +20,14 @@ def get_polls():
         logger.debug("returning poll data from the cache")
         return data
 
+    N = 30
+    start_date = datetime.now() - timedelta(days=N)
     api_base = settings.UREPORT_API_BASE
     args = {
         'limit': settings.UREPORT_API_LIMIT,
         'username': settings.UREPORT_API_USERNAME,
         'api_key': settings.UREPORT_API_KEY,
+        'start_date__gte': start_date,
     }
     url = api_base + 'polls/?' + urllib.urlencode(args)
     logger.debug("calling url: %s" % url)
