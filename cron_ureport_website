@@ -1,0 +1,1 @@
+@hourly www cd /var/www/prod/ureport_website/ureport_website/static/pulse && ./update.sh
