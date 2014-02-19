@@ -1,25 +1,15 @@
 # ureport_website/urls.py
 
+from .views import (AboutView, EngageView, NationalPulsePeriodView,
+                    NationalPulseView, PartnersDetailView, PartnersListView,
+                    PollDetailView, PollSearchView, PollsListView,
+                    ReadDetailView, ReadListView, SiteIndexView,
+                    WatchDetailView, WatchListView)
 from django.conf import settings
-from django.conf.urls import patterns, url, include
+from django.conf.urls import include, patterns, url
 from django.conf.urls.static import static
 from django.contrib import admin
-
-from .views import SiteIndexView
-from .views import AboutView
-from .views import EngageView
-from .views import NationalPulseView
-from .views import NationalPulsePeriodView
-from .views import PollsListView
-from .views import PollDetailView
-from .views import PollSearchView
-from .views import PartnersListView
-from .views import PartnersDetailView
-from .views import ReadListView
-from .views import ReadDetailView
-from .views import WatchListView
-from .views import WatchDetailView
-
+from django.views.generic import RedirectView
 
 admin.autodiscover()
 
@@ -107,4 +97,10 @@ urlpatterns = patterns(
         WatchDetailView.as_view(),
         name='website-watch-detail'
     ),
+
+    # favicon
+    url(
+        r'^favicon\.ico$',
+        RedirectView.as_view(url=settings.STATIC_URL + 'ico/favicon.png')
+    )
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

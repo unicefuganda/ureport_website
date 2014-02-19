@@ -84,6 +84,6 @@ UREPORT_API_USERNAME = get_env_setting('UREPORT_API_USERNAME')
 UREPORT_API_KEY = get_env_setting('UREPORT_API_KEY')
 UREPORT_API_BASE = 'http://ureport.ug/api/v1/'
 UREPORT_API_LIMIT = 0
-UREPORT_PULSE_WS = 'http://ureport.ug/pulse/'  # trailing slash is required here (d3 is not that sharp)
-UREPORT_PULSE_DISTRICT_WS = 'http://ureport.ug/static/ureport/data/districts.json'
+REPORT_PULSE_WS = '/static/pulse'
+UREPORT_PULSE_DISTRICT_WS = '/static/districts.json'
 ########## END UREPORT API CONFIGURATION
